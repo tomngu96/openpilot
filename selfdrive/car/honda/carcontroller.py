@@ -9,7 +9,7 @@ from openpilot.common.realtime import DT_CTRL
 from opendbc.can.packer import CANPacker
 from openpilot.selfdrive.car import create_gas_interceptor_command
 from openpilot.selfdrive.car.honda import hondacan
-from openpilot.selfdrive.car.honda.values import CruiseButtons, VISUAL_HUD, HONDA_BOSCH, HONDA_BOSCH_RADARLESS, HONDA_NIDEC_ALT_PCM_ACCEL, CarControllerParams
+from openpilot.selfdrive.car.honda.values import CruiseButtons, VISUAL_HUD, HONDA_BOSCH, HONDA_BOSCH_RADARLESS, HONDA_CANFD_CAR, HONDA_NIDEC_ALT_PCM_ACCEL, CarControllerParams
 from openpilot.selfdrive.car.interfaces import CarControllerBase
 from openpilot.selfdrive.controls.lib.drive_helpers import rate_limit, HONDA_V_CRUISE_MIN
 
@@ -229,7 +229,7 @@ class CarController(CarControllerBase):
     can_sends = []
 
     # tester present - w/ no response (keeps radar disabled)
-    if self.CP.carFingerprint in (HONDA_BOSCH - HONDA_BOSCH_RADARLESS) and self.CP.openpilotLongitudinalControl:
+    if self.CP.carFingerprint in (HONDA_BOSCH - HONDA_BOSCH_RADARLESS - HONDA_CANFD_CAR) and self.CP.openpilotLongitudinalControl:
       if self.frame % 10 == 0:
         can_sends.append((0x18DAB0F1, 0, b"\x02\x3E\x80\x00\x00\x00\x00\x00", 1))
 
@@ -267,7 +267,7 @@ class CarController(CarControllerBase):
       pcm_accel = int(clip((accel / 1.44) / max_accel, 0.0, 1.0) * self.params.NIDEC_GAS_MAX)
 
     if not self.CP.openpilotLongitudinalControl:
-      if self.frame % 2 == 0 and self.CP.carFingerprint not in HONDA_BOSCH_RADARLESS:  # radarless cars don't have supplemental message
+      if self.frame % 2 == 0 and self.CP.carFingerprint not in (HONDA_BOSCH_RADARLESS | HONDA_CANFD_CAR):  # radarless cars don't have supplemental message
         can_sends.append(hondacan.create_bosch_supplemental_1(self.packer, self.CAN, self.CP.carFingerprint))
       # If using stock ACC, spam cancel command to kill gas when OP disengages.
       if pcm_cancel_cmd:
