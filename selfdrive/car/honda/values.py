@@ -206,6 +206,13 @@ class CAR(Platforms):
     dbc_dict('honda_pilot_2023_can_generated', None),
     flags=HondaFlags.CANFD_CAR,
   )
+  HONDA_CRV_6G = HondaBoschPlatformConfig(
+    [HondaCarDocs("Honda CR-V 2024", "All")],
+    # mass: mean of 4 models in kg, steerRatio: 12.3 is spec end-to-end
+    CarSpecs(mass=1667, wheelbase=2.66, steerRatio=16, centerToFrontRatio=0.41, tireStiffnessFactor=0.677),
+    dbc_dict('honda_pilot_2023_can_generated', None),
+    flags=HondaFlags.CANFD_CAR,
+  )
   HONDA_PILOT_4G = HondaBoschPlatformConfig(
     [HondaCarDocs("Honda Pilot 2023", "All")],
     CarSpecs(mass=4278 * CV.LB_TO_KG, wheelbase=2.86, centerToFrontRatio=0.428, steerRatio=16.0, tireStiffnessFactor=0.444),  # as spec
@@ -341,9 +348,9 @@ FW_QUERY_CONFIG = FwQueryConfig(
   # Note that we still attempt to match with them when they are present
   # This is or'd with (ALL_ECUS - ESSENTIAL_ECUS) from fw_versions.py
   non_essential_ecus={
-    Ecu.eps: [CAR.ACURA_RDX_3G, CAR.HONDA_ACCORD, CAR.HONDA_CIVIC_2022, CAR.HONDA_E, CAR.HONDA_HRV_3G, CAR.HONDA_CRV_HYBRID_6G, CAR.HONDA_PILOT_4G],
+    Ecu.eps: [CAR.ACURA_RDX_3G, CAR.HONDA_ACCORD, CAR.HONDA_CIVIC_2022, CAR.HONDA_E, CAR.HONDA_HRV_3G, CAR.HONDA_CRV_HYBRID_6G, CAR.HONDA_CRV_6G, CAR.HONDA_PILOT_4G],
     Ecu.vsa: [CAR.ACURA_RDX_3G, CAR.HONDA_ACCORD, CAR.HONDA_CIVIC, CAR.HONDA_CIVIC_BOSCH, CAR.HONDA_CIVIC_2022, CAR.HONDA_CRV_5G, CAR.HONDA_CRV_HYBRID,
-              CAR.HONDA_E, CAR.HONDA_HRV_3G, CAR.HONDA_INSIGHT, CAR.HONDA_CRV_HYBRID_6G, CAR.HONDA_PILOT_4G],
+              CAR.HONDA_E, CAR.HONDA_HRV_3G, CAR.HONDA_INSIGHT, CAR.HONDA_CRV_HYBRID_6G, CAR.HONDA_CRV_6G, CAR.HONDA_PILOT_4G],
   },
   extra_ecus=[
     (Ecu.combinationMeter, 0x18da60f1, None),
