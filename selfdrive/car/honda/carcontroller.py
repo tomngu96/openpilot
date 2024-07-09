@@ -106,8 +106,8 @@ def rate_limit_steer(new_steer, last_steer, speed):
   # Define the maximum delta at higher speeds
   MAX_DELTA = 3 * DT_CTRL
   
-  # Define the speed threshold (25 MPH in m/s)
-  speed_threshold = 25 * CV.MPH_TO_MS
+  # Define the speed threshold (35 MPH in m/s)
+  speed_threshold = 35 * CV.MPH_TO_MS
 
   # Adjust MAX_DELTA based on speed, reducing it as speed drops below the threshold
   if speed < speed_threshold:
