@@ -104,17 +104,16 @@ HUDData = namedtuple("HUDData",
 # Gradually adjust steering input as the car slows bellow 25 MPH. (Fix Ping-Pong)
 def rate_limit_steer(new_steer, last_steer, speed):
   # Define the maximum delta at higher speeds
-  MAX_DELTA = 3 * DT_CTRL
+  max_delta_high_speed = 3 * DT_CTRL
+  max_delta_low_speed = 1 * DT_CTRL # min of 1 (potentially fixing right only)
   
-  # Define the speed threshold (35 MPH in m/s)
-  speed_threshold = 35 * CV.MPH_TO_MS
+  # Define the speed threshold (30 MPH in m/s)
+  speed_threshold = 30 * CV.MPH_TO_MS
 
   # Adjust MAX_DELTA based on speed, reducing it as speed drops below the threshold
-  if speed < speed_threshold:
-    reduction_factor = (speed_threshold - speed) / speed_threshold
-    MAX_DELTA -= reduction_factor * MAX_DELTA
+  max_delta = interp(speed, [0, speed_threshold], [max_delta_low_speed, max_delta_high_speed])
 
-  return clip(new_steer, last_steer - MAX_DELTA, last_steer + MAX_DELTA)
+  return clip(new_steer, last_steer - max_delta, last_steer + max_delta)
 
 #def rate_limit_steer(new_steer, last_steer):
   # TODO just hardcoded ramp to min/max in 0.33s for all Honda
