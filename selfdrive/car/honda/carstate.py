@@ -8,7 +8,7 @@ from opendbc.can.parser import CANParser
 from openpilot.selfdrive.car.honda.hondacan import CanBus, get_cruise_speed_conversion
 from openpilot.selfdrive.car.honda.values import CAR, DBC, STEER_THRESHOLD, HONDA_BOSCH, \
                                                  HONDA_NIDEC_ALT_SCM_MESSAGES, HONDA_BOSCH_RADARLESS, \
-                                                 HondaFlags, SERIAL_STEERING
+                                                 HondaFlags, SERIAL_STEERING, GearShifter
 from openpilot.selfdrive.car.interfaces import CarStateBase
 
 TransmissionType = car.CarParams.TransmissionType
@@ -95,12 +95,15 @@ class CarState(CarStateBase):
       self.gearbox_msg = "GEARBOX_15T"
     elif CP.carFingerprint == CAR.HONDA_CRV_6G:
       self.gearbox_msg = "GEARBOX_15T"
+    elif CP.transmissionType == TransmissionType.manual:
+      self.gearbox_msg = "GEARBOX_BOH"
 
     self.main_on_sig_msg = "SCM_FEEDBACK"
     if CP.carFingerprint in HONDA_NIDEC_ALT_SCM_MESSAGES:
       self.main_on_sig_msg = "SCM_BUTTONS"
 
-    self.shifter_values = can_define.dv[self.gearbox_msg]["GEAR_SHIFTER"]
+    if CP.transmissionType != TransmissionType.manual:
+      self.shifter_values = can_define.dv[self.gearbox_msg]["GEAR_SHIFTER"]
     self.steer_status_values = defaultdict(lambda: "UNKNOWN", can_define.dv["STEER_STATUS"]["STEER_STATUS"])
 
     self.brake_switch_prev = False
@@ -195,8 +198,15 @@ class CarState(CarStateBase):
     if self.CP.carFingerprint in (HONDA_BOSCH | {CAR.HONDA_CIVIC, CAR.HONDA_ODYSSEY, CAR.HONDA_ODYSSEY_CHN, CAR.HONDA_CLARITY}):
       ret.parkingBrake = cp.vl["EPB_STATUS"]["EPB_STATE"] != 0
 
-    gear = int(cp.vl[self.gearbox_msg]["GEAR_SHIFTER"])
-    ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(gear, None))
+    if self.CP.transmissionType == TransmissionType.manual:
+      ret.clutchPressed = cp.vl["GEARBOX_BOH"]["GEAR_MT"] == 0
+      if cp.vl["GEARBOX_BOH"]["GEAR_MT"] == 14:
+        ret.gearShifter = GearShifter.reverse
+      else:
+        ret.gearShifter = GearShifter.drive
+    else:
+      gear = int(cp.vl[self.gearbox_msg]["GEAR_SHIFTER"])
+      ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(gear, None))
 
     if self.CP.enableGasInterceptorDEPRECATED:
       # Same threshold as panda, equivalent to 1e-5 with previous DBC scaling
