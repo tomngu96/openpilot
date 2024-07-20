@@ -101,24 +101,11 @@ HUDData = namedtuple("HUDData",
                      ["pcm_accel", "v_cruise", "lead_visible",
                       "lanes_visible", "fcw", "acc_alert", "steer_required", "lead_distance_bars", "dashed_lanes"])
 
-# Gradually adjust steering input as the car slows bellow 25 MPH. (Fix Ping-Pong)
-def rate_limit_steer(new_steer, last_steer, speed):
-  # Define the maximum delta at higher speeds
-  max_delta_high_speed = 3 * DT_CTRL
-  max_delta_low_speed = 1 * DT_CTRL # min of 1 (potentially fixing right only)
-  
-  # Define the speed threshold (30 MPH in m/s)
-  speed_threshold = 30 * CV.MPH_TO_MS
 
-  # Adjust MAX_DELTA based on speed, reducing it as speed drops below the threshold
-  max_delta = interp(speed, [0, speed_threshold], [max_delta_low_speed, max_delta_high_speed])
-
-  return clip(new_steer, last_steer - max_delta, last_steer + max_delta)
-
-#def rate_limit_steer(new_steer, last_steer):
+def rate_limit_steer(new_steer, last_steer):
   # TODO just hardcoded ramp to min/max in 0.33s for all Honda
-#  MAX_DELTA = 3 * DT_CTRL
-#  return clip(new_steer, last_steer - MAX_DELTA, last_steer + MAX_DELTA)
+  MAX_DELTA = 3 * DT_CTRL
+  return clip(new_steer, last_steer - MAX_DELTA, last_steer + MAX_DELTA)
 
 
 class CarController(CarControllerBase):
@@ -206,10 +193,8 @@ class CarController(CarControllerBase):
       gas, brake = 0.0, 0.0
 
     # *** rate limit steer ***
-    limited_steer = rate_limit_steer(actuators.steer, self.last_steer, CS.out.vEgo)
+    limited_steer = rate_limit_steer(actuators.steer, self.last_steer)
     self.last_steer = limited_steer
-    #limited_steer = rate_limit_steer(actuators.steer, self.last_steer)
-    #self.last_steer = limited_steer
 
     # *** apply brake hysteresis ***
     pre_limit_brake, self.braking, self.brake_steady = actuator_hysteresis(brake, self.braking, self.brake_steady,
