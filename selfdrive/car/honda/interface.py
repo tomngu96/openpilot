@@ -132,7 +132,16 @@ class CarInterface(CarInterfaceBase):
       if eps_modified:
         ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.3], [0.09]]
       else:
-        ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.6], [0.18]]
+        # tom's experiment - we want to update the proportional gain (kp) for ~35mph and under. everything is in m/s so 15.6464 m/s
+        # 3 break points 0-15.6464 is a linear interp, 15.6464 - inf is maintained as existing
+
+        # stock kiV is a constant .18
+        ret.lateralTuning.pid.kiBP = [0.]
+        ret.lateralTuning.pid.kiV = [0.18]
+
+        # stock kpV is a constant .6
+        ret.lateralTuning.pid.kpBP = [0., 15.6464, 4096.]
+        ret.lateralTuning.pid.kpV = [0.5, 0.6, 0.6]
 
     elif candidate == CAR.ACURA_ILX:
       ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 3840], [0, 3840]]  # TODO: determine if there is a dead zone at the top end
