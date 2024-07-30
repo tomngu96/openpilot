@@ -1,3 +1,8 @@
+hamstapilot (SP Mod) - 0.9.8.1 (2024-xx-xx)
+========================
+* Adjusted steering to now have low pass filter
+* Removed old ping pong fix
+
 sunnypilot - 0.9.8.0 (2024-xx-xx)
 ========================
 * Always on driver monitoring toggle
