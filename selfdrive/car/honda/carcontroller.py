@@ -16,6 +16,9 @@ from openpilot.selfdrive.controls.lib.drive_helpers import rate_limit, HONDA_V_C
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 LongCtrlState = car.CarControl.Actuators.LongControlState
 
+# Adjustment to help with ping pong, based on speed.
+def low_pass_filter(new_steer, last_steer, alpha):
+  return alpha * new_steer + (1 - alpha) * last_steer
 
 def compute_gb_honda_bosch(accel, speed):
   # TODO returns 0s, is unused
@@ -191,8 +194,13 @@ class CarController(CarControllerBase):
       accel = 0.0
       gas, brake = 0.0, 0.0
 
-    # *** rate limit steer ***
-    limited_steer = rate_limit_steer(actuators.steer, self.last_steer)
+    # Determine alpha based on speed (30 MPH and under)
+    speed_threshold = 30 * CV.MPH_TO_MS
+    alpha = 0.1 if CS.out.vEgo < speed_threshold else 0.2
+    
+    # Apply low-pass filter to the steering command
+    limited_steer = rate_limit_steer(actuators.steer, self.last_steer, CS.out.vEgo)
+    self.filtered_steer = low_pass_filter(limited_steer, self.filtered_steer, alpha)
     self.last_steer = limited_steer
 
     # *** apply brake hysteresis ***
