@@ -1,3 +1,9 @@
+Version 0.9.8.1 (2024-XX-XX)
+========================
+* Added new lowpass filter to steering
+* Removed old ping pong fix
+* No SP updates, just some adjustments to fork.
+
 Version 0.9.8 (2024-XX-XX)
 ========================
 * Always on driver monitoring toggle
