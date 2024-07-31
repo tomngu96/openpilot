@@ -1,7 +1,7 @@
 hamstapilot (SP Mod) - 0.9.8.1 (2024-xx-xx)
 ========================
-* Adjusted steering to now have low pass filter
-* Removed old ping pong fix
+* Removed steering limiter and fixed control error
+* Adjusted tuning on Accord_11G
 
 sunnypilot - 0.9.8.0 (2024-xx-xx)
 ========================
