@@ -16,7 +16,6 @@ from openpilot.selfdrive.controls.lib.drive_helpers import rate_limit, HONDA_V_C
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 LongCtrlState = car.CarControl.Actuators.LongControlState
 
-
 def compute_gb_honda_bosch(accel, speed):
   # TODO returns 0s, is unused
   return 0.0, 0.0
@@ -100,7 +99,6 @@ def process_hud_alert(hud_alert):
 HUDData = namedtuple("HUDData",
                      ["pcm_accel", "v_cruise", "lead_visible",
                       "lanes_visible", "fcw", "acc_alert", "steer_required", "lead_distance_bars", "dashed_lanes"])
-
 
 def rate_limit_steer(new_steer, last_steer):
   # TODO just hardcoded ramp to min/max in 0.33s for all Honda

@@ -1,3 +1,8 @@
+hamstapilot (SP Mod) - 0.9.8.1 (2024-xx-xx)
+========================
+* Removed steering limiter and fixed control error
+* Adjusted tuning on Accord_11G
+
 sunnypilot - 0.9.8.0 (2024-xx-xx)
 ========================
 * Always on driver monitoring toggle
