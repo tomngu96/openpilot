@@ -74,6 +74,9 @@ class CarInterface(CarInterfaceBase):
     # Accord ICE 1.5T CVT has different gearbox message
     if candidate == CAR.HONDA_ACCORD and 0x191 in fingerprint[CAN.pt]:
       ret.transmissionType = TransmissionType.cvt
+    # 11G Accord
+    elif candidate == CAR.HONDA_ACCORD_11G and 0x1A3 not in fingerprint[CAN.pt]:
+      ret.transmissionType = TransmissionType.cvt
     # New Civics can have manual transmission
     elif candidate == CAR.HONDA_CIVIC_2022 and 0x191 not in fingerprint[CAN.pt]:
       ret.transmissionType = TransmissionType.manual
@@ -139,8 +142,10 @@ class CarInterface(CarInterfaceBase):
         ret.lateralTuning.pid.kiBP = [0.]
         ret.lateralTuning.pid.kiV = [0.18]
 
+        # this is a very crude guess.. we are supposed to use plotjuggler probably but that involves learning
         # stock kpV is a constant .6
-        ret.lateralTuning.pid.kpBP = [0., 15.6464, 4096.]
+        # 30mph = 13.41m/s
+        ret.lateralTuning.pid.kpBP = [0., 13.41, 4096.]
         ret.lateralTuning.pid.kpV = [0.5, 0.6, 0.6]
 
     elif candidate == CAR.ACURA_ILX:
