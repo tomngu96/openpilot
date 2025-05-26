@@ -133,18 +133,18 @@ class CarInterface(CarInterfaceBase):
       ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 12288], [0, 12288]]
       # TODO TOM Working here
       # slight bump on feedforward to keep it more on the inside of turns
-      ret.lateralTuning.pid.kf = 0.00007
+      ret.lateralTuning.pid.kf = 0.00006
       # 3 break points 0-15.6464 is a linear interp, 15.6464 - inf is maintained as existing
 
       # stock kiV is a constant .18
       ret.lateralTuning.pid.kiBP = [0.]
       # basic tuning says to tune kf and kp with ki set to 0. it was originally .18
-      ret.lateralTuning.pid.kiV = [0.]
+      ret.lateralTuning.pid.kiV = [0.18]
 
       # tom's experiment - we want to update the proportional gain (kp) for ~35mph and under. everything is in m/s so 15.6464 m/s
       # stock kpV is a constant .6. last known kpv without osciollation on old lower torque was .2
       ret.lateralTuning.pid.kpBP = [0., 15.6464, 4096.]
-      ret.lateralTuning.pid.kpV = [0.15, 0.5, 0.5]
+      ret.lateralTuning.pid.kpV = [0.10, 0.18, 0.5]
 
     
     elif candidate == CAR.HONDA_ACCORD:
