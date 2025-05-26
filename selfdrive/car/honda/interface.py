@@ -132,7 +132,7 @@ class CarInterface(CarInterfaceBase):
     elif candidate == CAR.HONDA_ACCORD_11G:
       ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 12288], [0, 12288]]
       # TODO TOM Working here
-      ret.lateralTuning.pid.kf = 0.00006
+      ret.lateralTuning.pid.kf = 0.00005
 
       # stock kiV is a constant .18
       ret.lateralTuning.pid.kiBP = [0.]
@@ -143,7 +143,7 @@ class CarInterface(CarInterfaceBase):
       # 3 break points 0-15.6464 is a linear interp, 15.6464 - inf is maintained as existing
       # stock kpV is a constant .6. last known kpv without osciollation on old lower torque was .2
       ret.lateralTuning.pid.kpBP = [0., 15.6464, 4096.]
-      ret.lateralTuning.pid.kpV = [0.05, 0.17, 0.5]
+      ret.lateralTuning.pid.kpV = [0.03, 0.17, 0.5]
 
     
     elif candidate == CAR.HONDA_ACCORD:
