@@ -131,26 +131,29 @@ class CarInterface(CarInterfaceBase):
 
     elif candidate == CAR.HONDA_ACCORD_11G:
       ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 12288], [0, 12288]]
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.2], [0.18]]
-      
+      # TODO TOM Working here
+      # slight bump on feedforward to keep it more on the inside of turns
+      ret.lateralTuning.pid.kf = 0.00007
+      # 3 break points 0-15.6464 is a linear interp, 15.6464 - inf is maintained as existing
+
+      # stock kiV is a constant .18
+      ret.lateralTuning.pid.kiBP = [0.]
+      # basic tuning says to tune kf and kp with ki set to 0. it was originally .18
+      ret.lateralTuning.pid.kiV = [0.]
+
+      # tom's experiment - we want to update the proportional gain (kp) for ~35mph and under. everything is in m/s so 15.6464 m/s
+      # stock kpV is a constant .6. last known kpv without osciollation on old lower torque was .2
+      ret.lateralTuning.pid.kpBP = [0., 15.6464, 4096.]
+      ret.lateralTuning.pid.kpV = [0.15, 0.5, 0.5]
+
+    
     elif candidate == CAR.HONDA_ACCORD:
       ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 4096], [0, 4096]]  # TODO: determine if there is a dead zone at the top end
 
       if eps_modified:
         ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.3], [0.09]]
       else:
-        # tom's experiment - we want to update the proportional gain (kp) for ~35mph and under. everything is in m/s so 15.6464 m/s
-        # 3 break points 0-15.6464 is a linear interp, 15.6464 - inf is maintained as existing
-
-        # stock kiV is a constant .18
-        ret.lateralTuning.pid.kiBP = [0.]
-        ret.lateralTuning.pid.kiV = [0.18]
-
-        # this is a very crude guess.. we are supposed to use plotjuggler probably but that involves learning
-        # stock kpV is a constant .6
-        # 30mph = 13.41m/s
-        ret.lateralTuning.pid.kpBP = [0., 13.41, 4096.]
-        ret.lateralTuning.pid.kpV = [0.5, 0.6, 0.6]
+        ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.6], [0.18]]
 
     elif candidate == CAR.ACURA_ILX:
       ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 3840], [0, 3840]]  # TODO: determine if there is a dead zone at the top end
