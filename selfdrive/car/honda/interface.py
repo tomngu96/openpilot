@@ -130,7 +130,7 @@ class CarInterface(CarInterfaceBase):
         ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.8], [0.24]]
 
     elif candidate == CAR.HONDA_ACCORD_11G:
-      ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 4096], [0, 4096]]
+      ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 6966], [0, 6966]]
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.2], [0.18]]
     
     elif candidate == CAR.HONDA_ACCORD:
